@@ -10,7 +10,12 @@ def broadcast_data (sock, message):
     for socket in CONNECTION_LIST:
         if socket != server_socket and socket != sock :
             try :
-                socket.send(message)
+		flag=0
+		for i in range (len(soket)):
+			if soket[i]==socket:
+				flag=1
+		if flag==1:
+                	socket.send(message)
             except :
                 socket.close()
                 CONNECTION_LIST.remove(socket)
