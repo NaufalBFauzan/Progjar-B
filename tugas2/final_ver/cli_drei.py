@@ -23,6 +23,9 @@ if __name__ == "__main__":
     sys.stdout.write('Insert Username : ')
     sys.stdout.flush()
     uname = sys.stdin.readline().rstrip('\n')
+    if (' ' in uname) == False:
+	print "\rSERVER:Login or register failed, wrong command input"
+	sys.exit()
     u_name = uname.split(" ",2)
     u_name_ = u_name[1]
     a = ("UN", uname)
@@ -34,7 +37,7 @@ if __name__ == "__main__":
     datas = s.recv(4096)
     if flag != str(datas):
 	sys.stdout.write(datas)
-	print "\rClient will be closed"
+	print "\nClient will be closed"
 	sys.exit()
 
     print 'Connected to remote host. Start sending messages'

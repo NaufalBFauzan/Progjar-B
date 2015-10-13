@@ -101,6 +101,12 @@ if __name__ == "__main__":
 								print "Client "+str(sock.getpeername())+" is successfully loged in with "+str(data_user[1])+" as username"
 								broadcast_data(sock, str(data_user[1])+" entered room\n")
 								sock.send("OK")
+						else:
+							print "Client "+str(sock.getpeername())+" is using wrong log-in or register command\n"
+							sock.send("\rSERVER:Login or register failed, wrong command input")
+							sock.close()
+			      			        CONNECTION_LIST.remove(sock)
+							continue
 					if flag==1:
 						print "Client "+str(sock.getpeername())+" is trying using used username : "+str(data_user[1])
 						sock.send("\rSERVER:Login failed, username already used by someone else\n")
