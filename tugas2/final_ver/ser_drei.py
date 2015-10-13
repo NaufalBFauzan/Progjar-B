@@ -11,9 +11,8 @@ def broadcast_data (sock, message):
         if socket != server_socket and socket != sock :
             try :
 		flag=0
-		for i in range (len(soket)):
-			if soket[i]==socket:
-				flag=1
+		if soket.count(socket)==1:
+			flag=1
 		if flag==1:
                 	socket.send(message)
             except :
@@ -70,24 +69,32 @@ if __name__ == "__main__":
 				if data_command[0] == "UN":
 					data_user = data_command[1].split(' ', 2)
 					flag=0
-					for i in range (len(users)):
-						if str(data_user[1]) == str(users[i]):
-							flag=1
+					if users.count(data_user[1])==1:
+						flag=1
 					if flag==0:
 						if data_user[0] == "regist":
-		   			 		adres.append(str(sock.getpeername()))
-		    					users.append(str(data_user[1]))
-							n_us.append(str(data_user[1]))
-							passw[data_user[1]]=data_user[2]
-							soket.append(sock)
-							print "Client "+str(sock.getpeername())+" is successfully registered as "+str(data_user[1])
-							broadcast_data(sock, str(data_user[1])+" entered room\n")
-							sock.send("OK")
-						if data_user[0] == "login":
+							flags=0
+							if n_us.count(data_user[1])==1:
+								flags=1
+							if flags==0:
+			   			 		adres.append(str(sock.getpeername()))
+			    					users.append(str(data_user[1]))
+								n_us.append(str(data_user[1]))
+								passw[data_user[1]]=data_user[2]
+								soket.append(sock)
+								print "Client "+str(sock.getpeername())+" is successfully registered as "+str(data_user[1])
+								broadcast_data(sock, str(data_user[1])+" entered room\n")
+								sock.send("OK")
+							elif flags==1:
+								print "Client "+str(sock.getpeername())+" is trying to register using existed username"
+								sock.send("\rSERVER:Register failed, using existed username")
+								sock.close()
+				      			        CONNECTION_LIST.remove(sock)
+								continue
+						elif data_user[0] == "login":
 							cek=0
-							for i in range (len(n_us)):
-								if data_user[1]==n_us[i]:
-									cek=1
+							if n_us.count(data_user[1])==1:
+								cek=1
 							if cek==0:
 								print "Client "+str(sock.getpeername())+" is failed trying to loging in with username : "+str(data_user[1])
 								sock.send("\rSERVER:Login failed, username didn't exist\n")
@@ -102,14 +109,14 @@ if __name__ == "__main__":
 								broadcast_data(sock, str(data_user[1])+" entered room\n")
 								sock.send("OK")
 						else:
-							print "Client "+str(sock.getpeername())+" is using wrong log-in or register command\n"
+							print "Client "+str(sock.getpeername())+" is using wrong log-in or register command"
 							sock.send("\rSERVER:Login or register failed, wrong command input")
 							sock.close()
 			      			        CONNECTION_LIST.remove(sock)
 							continue
 					if flag==1:
 						print "Client "+str(sock.getpeername())+" is trying using used username : "+str(data_user[1])
-						sock.send("\rSERVER:Login failed, username already used by someone else\n")
+						sock.send("\rSERVER:Login failed, username already used by someone else")
 						sock.close()
 		      			        CONNECTION_LIST.remove(sock)
 						continue
@@ -121,13 +128,14 @@ if __name__ == "__main__":
 					data_sendto = str(data_command[1]).split(' ', 1)
 					flag=0
 					rece = data_sendto[0]
-					for i in range (len(users)):
-						if users[i]==rece:
-							note=i
-							flag=1
+					if users.count(rece)==1:
+						flag=1
 					if flag==0 :
 						sock.send("SERVER: Recipient is not exist\n")						
 					else:
+						for i in range (len(users)):
+							if users[i]==rece:
+								note=i
 						soket[note].send("\r" + '[' + user + '] : ' + str(data_sendto[1]))
 
 
